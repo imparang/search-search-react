@@ -12,7 +12,6 @@ import {
 const SearchProduct = ({ getData }) => {
   const [query, setQuery] = useState('')
   const [autoCompletedQuery, setAutoCompletedQuery] = useState([])
-  const [searchResults, setSearchResults] = useState([])
 
   const autoCompletedSearchQuery = useCallback(async query => {
     try {
@@ -26,18 +25,20 @@ const SearchProduct = ({ getData }) => {
     }
   }, [])
 
-  const fetchSearchResult = useCallback(async query => {
-    try {
-      const res = await axios.get(`/shop/search?query=${query}`)
-      if (res && res.status === 200) {
-        const { data } = res
-        console.log(data.items)
-        setSearchResults(data.items)
+  const fetchSearchResult = useCallback(
+    async query => {
+      try {
+        const res = await axios.get(`/shop/search?query=${query}`)
+        if (res && res.status === 200) {
+          const { data } = res
+          return data.items
+        }
+      } catch (error) {
+        console.log(error)
       }
-    } catch (error) {
-      console.log(error)
-    }
-  }, [])
+    },
+    [query]
+  )
 
   const onChangeQuery = useCallback(
     text => {
@@ -48,17 +49,17 @@ const SearchProduct = ({ getData }) => {
   )
 
   const onSearch = useCallback(
-    e => {
+    async (e, query) => {
       e.preventDefault()
-      fetchSearchResult(query)
+      const searchResults = await fetchSearchResult(query)
       setAutoCompletedQuery([])
-      console.log(searchResults)
       getData(searchResults)
     },
-    [query, fetchSearchResult, searchResults, getData]
+    [fetchSearchResult, getData, query]
   )
+
   return (
-    <Form style={{ marginBottom: '40px' }} onSubmit={onSearch}>
+    <Form style={{ marginBottom: '40px' }} onSubmit={e => onSearch(e, query)}>
       <FormGroup>
         <Label>쇼핑 품목을 검색하세요</Label>
         <Input
@@ -74,7 +75,14 @@ const SearchProduct = ({ getData }) => {
         <ListGroup>
           {autoCompletedQuery.map(item =>
             item.map(el => (
-              <ListGroupItem key={Math.random()}>{el}</ListGroupItem>
+              <ListGroupItem
+                key={Math.random()}
+                onClick={e => {
+                  onSearch(e, e.target.textContent)
+                }}
+              >
+                {el}
+              </ListGroupItem>
             ))
           )}
         </ListGroup>
