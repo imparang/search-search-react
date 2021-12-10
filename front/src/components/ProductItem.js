@@ -4,9 +4,13 @@ import PropTypes from 'prop-types'
 
 const ProductItem = ({ product }) => {
   return (
-    <tr>
+    <tr style={{ textAlign: 'center', verticalAlign: 'middle' }}>
       <td>
-        <img src={product.image} alt={`${product.title} 이미지`} />
+        <img
+          src={product.image}
+          alt={`${product.title} 이미지`}
+          style={{ display: 'inline-block', width: '80px', height: '80px' }}
+        />
       </td>
       <td>{product.title}</td>
       <td>{product.maker}</td>
