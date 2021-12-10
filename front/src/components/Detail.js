@@ -1,5 +1,6 @@
-import React from 'react'
-import { Col, Container, Row } from 'reactstrap'
+import axios from 'axios'
+import React, { useCallback, useEffect, useState } from 'react'
+import { Col, Container, Row, Table } from 'reactstrap'
 import {
   LineChart,
   Line,
@@ -9,35 +10,69 @@ import {
   Tooltip,
   ResponsiveContainer
 } from 'recharts'
+import ProductItem from './ProductItem'
 
 const Detail = () => {
-  const data = [
-    { name: 'Page A', uv: 400, pv: 2400, amt: 2400 },
-    { name: 'Page B', uv: 600, pv: 1400, amt: 2400 },
-    { name: 'Page C', uv: 1400, pv: 2200, amt: 2400 },
-    { name: 'Page D', uv: 900, pv: 1100, amt: 2400 },
-    { name: 'Page E', uv: 400, pv: 2400, amt: 2400 },
-    { name: 'Page F', uv: 500, pv: 2000, amt: 2400 }
-  ]
+  const [data, setData] = useState()
+  const [list, setList] = useState([])
+  const [isDetail, setIsDetail] = useState(false)
 
+  useEffect(() => {
+    axios.post('/account/detail').then(res => setList(res.data.json))
+  }, [])
+
+  const onClickCategory = useCallback(category1 => {
+    axios.post('/account/category', { category1 }).then(res => {
+      setData(res.data.json)
+      setIsDetail(true)
+    })
+  }, [])
+
+  const expenditureList =
+    data &&
+    data.map(product => (
+      <ProductItem
+        key={product.productId}
+        product={product}
+        isDetail={isDetail}
+      />
+    ))
   return (
     <Container>
       <Row>
         <Col>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart
-              data={data}
+              data={list}
               margin={{ top: 5, right: 20, bottom: 5, left: 0 }}
+              onClick={e => onClickCategory(e.activeLabel)}
             >
-              <Line type="monotone" dataKey="uv" stroke="#8884d8" />
+              <Line type="monotone" dataKey="buyCount" stroke="#8884d8" />
               <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-              <XAxis dataKey="name" />
+              <XAxis dataKey="category1" />
               <YAxis />
               <Tooltip />
             </LineChart>
           </ResponsiveContainer>
         </Col>
       </Row>
+      {data && (
+        <Row>
+          <Col>
+            <Table hover>
+              <thead>
+                <tr style={{ textAlign: 'center', verticalAlign: 'middle' }}>
+                  <th>제품</th>
+                  <th>상품명</th>
+                  <th>제품수</th>
+                  <th>구매일</th>
+                </tr>
+              </thead>
+              <tbody>{expenditureList}</tbody>
+            </Table>
+          </Col>
+        </Row>
+      )}
     </Container>
   )
 }
