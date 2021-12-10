@@ -2,14 +2,14 @@ import React from 'react'
 import { Card, Table } from 'reactstrap'
 import ProductItem from './ProductItem'
 
-const ProductList = ({ data }) => {
+const ProductList = ({ data, isSearch }) => {
   const productitems =
     data &&
     data.map(product => (
       <ProductItem key={product.productId} product={product} />
     ))
 
-  return data.length ? (
+  return data?.length ? (
     <Table hover>
       <thead>
         <tr style={{ textAlign: 'center', verticalAlign: 'middle' }}>
@@ -24,16 +24,9 @@ const ProductList = ({ data }) => {
     </Table>
   ) : (
     <Card style={{ height: 'calc(100vh - 274px)', padding: '20px' }}>
-      상품이 없습니다.
+      {isSearch && '상품이 없습니다.'}
     </Card>
   )
-
-  // {data.map(item => (
-  //   <div
-  //     key={item.productId}
-  //     dangerouslySetInnerHTML={{ __html: item.title }}
-  //   ></div>
-  // ))}
 }
 
 export default ProductList
