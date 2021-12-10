@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import {
   Card,
   Container,
@@ -16,14 +16,18 @@ function App() {
   const [activeTab, setActiveTab] = useState('1')
   const [active, setActive] = useState(false)
   const [data, setData] = useState([])
+  const [isSearch, setIsSearch] = useState(false)
 
   const getData = useCallback(
     data => {
       setData(data)
-      console.log(data)
     },
     [data]
   )
+
+  useEffect(() => {
+    setIsSearch(true)
+  }, [data])
   return (
     <Container style={{ padding: '20px 0' }}>
       <Nav tabs>
@@ -54,7 +58,7 @@ function App() {
         <TabContent activeTab={activeTab}>
           <TabPane tabId="1">
             <SearchProduct getData={getData} />
-            <ProductList data={data} />
+            <ProductList data={data} isSearch={isSearch} />
           </TabPane>
           <TabPane tabId="2">
             <Detail />
