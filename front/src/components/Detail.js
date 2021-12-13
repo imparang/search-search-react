@@ -1,5 +1,5 @@
-import axios from 'axios'
-import React, { useCallback, useEffect, useState } from 'react'
+import { observer } from 'mobx-react'
+import React, { useCallback, useEffect } from 'react'
 import { Col, Container, Row, Table } from 'reactstrap'
 import {
   LineChart,
@@ -12,29 +12,25 @@ import {
 } from 'recharts'
 import ProductItem from './ProductItem'
 
-const Detail = () => {
-  const [data, setData] = useState()
-  const [list, setList] = useState([])
-  const [isDetail, setIsDetail] = useState(false)
-
+const Detail = ({ store }) => {
   useEffect(() => {
-    axios.post('/account/detail').then(res => setList(res.data.json))
+    store.getChart()
   }, [])
 
-  const onClickCategory = useCallback(category1 => {
-    axios.post('/account/category', { category1 }).then(res => {
-      setData(res.data.json)
-      setIsDetail(true)
-    })
-  }, [])
+  const onClickCategory = useCallback(
+    category => {
+      store.getDetail(category)
+    },
+    [store]
+  )
 
   const expenditureList =
-    data &&
-    data.map(product => (
+    store.details &&
+    store.details.map(product => (
       <ProductItem
         key={product.productId}
         product={product}
-        isDetail={isDetail}
+        isDetail={store.isDetail}
       />
     ))
   return (
@@ -43,7 +39,7 @@ const Detail = () => {
         <Col>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart
-              data={list}
+              data={store.chart}
               margin={{ top: 5, right: 20, bottom: 5, left: 0 }}
               onClick={e => onClickCategory(e.activeLabel)}
             >
@@ -56,7 +52,7 @@ const Detail = () => {
           </ResponsiveContainer>
         </Col>
       </Row>
-      {data && (
+      {store.details && (
         <Row>
           <Col>
             <Table hover>
@@ -77,4 +73,4 @@ const Detail = () => {
   )
 }
 
-export default Detail
+export default observer(Detail)
