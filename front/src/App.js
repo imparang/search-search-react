@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import {
   Card,
   Container,
@@ -11,23 +11,14 @@ import {
 import Detail from './components/Detail'
 import ProductList from './components/ProductList'
 import SearchProduct from './components/SearchProduct'
+import ShopStore from './redux/store'
+
+const store = new ShopStore()
 
 function App() {
   const [activeTab, setActiveTab] = useState('1')
   const [active, setActive] = useState(false)
-  const [data, setData] = useState([])
-  const [isSearch, setIsSearch] = useState(false)
 
-  const getData = useCallback(
-    data => {
-      setData(data)
-    },
-    [data]
-  )
-
-  useEffect(() => {
-    setIsSearch(true)
-  }, [data])
   return (
     <Container style={{ padding: '20px 0' }}>
       <Nav tabs>
@@ -54,14 +45,14 @@ function App() {
           </NavLink>
         </NavItem>
       </Nav>
-      <Card style={{ padding: '40px', height: 'calc(100vh - 84px)' }}>
+      <Card style={{ padding: '40px', height: '100%' }}>
         <TabContent activeTab={activeTab}>
           <TabPane tabId="1">
-            <SearchProduct getData={getData} />
-            <ProductList data={data} isSearch={isSearch} />
+            <SearchProduct store={store} />
+            <ProductList store={store} />
           </TabPane>
           <TabPane tabId="2">
-            <Detail />
+            <Detail store={store} />
           </TabPane>
         </TabContent>
       </Card>
