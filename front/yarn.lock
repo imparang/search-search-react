@@ -7793,6 +7793,23 @@
   "resolved" "https://registry.npmjs.org/mkdirp/-/mkdirp-1.0.4.tgz"
   "version" "1.0.4"
 
+"mobx-react-lite@^3.2.0":
+  "integrity" "sha512-FxJJMqmHcnQYOVVs2DdjNHioGlFsXF5/9VHztS9NAfIT3DYrxNZzVi119Zr/OmlWKkWNkAsssSNzPkqautfL4A=="
+  "resolved" "https://registry.npmjs.org/mobx-react-lite/-/mobx-react-lite-3.2.2.tgz"
+  "version" "3.2.2"
+
+"mobx-react@^7.2.1":
+  "integrity" "sha512-LZS99KFLn75VWDXPdRJhILzVQ7qLcRjQbzkK+wVs0Qg4kWw5hOI2USp7tmu+9zP9KYsVBmKyx2k/8cTTBfsymw=="
+  "resolved" "https://registry.npmjs.org/mobx-react/-/mobx-react-7.2.1.tgz"
+  "version" "7.2.1"
+  dependencies:
+    "mobx-react-lite" "^3.2.0"
+
+"mobx@^6.1.0", "mobx@^6.3.8":
+  "integrity" "sha512-RfG2y766P1o9u9xrQht/HBXEoUPIr4B3Gjri3reLW/TuHm3I/3TfBBS0OaeMbw19RIF0AymqjDNlJgakN4ZK7g=="
+  "resolved" "https://registry.npmjs.org/mobx/-/mobx-6.3.8.tgz"
+  "version" "6.3.8"
+
 "move-concurrently@^1.0.1":
   "integrity" "sha1-viwAX9oy4LKa8fBdfEszIUxwH5I="
   "resolved" "https://registry.npmjs.org/move-concurrently/-/move-concurrently-1.0.1.tgz"
