@@ -1,5 +1,4 @@
-import axios from 'axios'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import {
   Form,
   FormGroup,
@@ -8,87 +7,66 @@ import {
   ListGroup,
   ListGroupItem
 } from 'reactstrap'
+import { observer } from 'mobx-react'
 
-const SearchProduct = ({ getData }) => {
-  const [query, setQuery] = useState('')
+// ? searchResults -> Proxy data => submit할 때, 데이터를 잘 받도록 하기
+// ? 지출 내역 차트도 mobx로 만들기, detail도 mobx 사용하기
+
+const SearchProduct = ({ store }) => {
+  const [text, setText] = useState('')
   const [autoCompletedQuery, setAutoCompletedQuery] = useState([])
 
-  const autoCompletedSearchQuery = useCallback(async query => {
-    try {
-      const res = await axios.get(`/shop?query=${query}`)
-      if (res && res.status === 200) {
-        const { data } = res
-        setAutoCompletedQuery(data.items)
-      }
-    } catch (e) {
-      console.log('error ', e)
-    }
-  }, [])
-
-  const fetchSearchResult = useCallback(
-    async query => {
-      try {
-        const res = await axios.get(`/shop/search?query=${query}`)
-        if (res && res.status === 200) {
-          const { data } = res
-          return data.items
-        }
-      } catch (error) {
-        console.log(error)
-      }
-    },
-    [query]
-  )
+  useEffect(() => {
+    setAutoCompletedQuery(store.autoCompletedQuery)
+  }, [store.autoCompletedQuery])
 
   const onChangeQuery = useCallback(
-    text => {
-      setQuery(text)
-      autoCompletedSearchQuery(query)
+    query => {
+      setText(query)
+      store.getAutoCompletedQuery(query)
     },
-    [query, autoCompletedSearchQuery]
+    [store]
   )
 
   const onSearch = useCallback(
-    async (e, query) => {
+    e => {
       e.preventDefault()
-      const searchResults = await fetchSearchResult(query)
       setAutoCompletedQuery([])
-      getData(searchResults)
+      store.getSearchResults(text)
     },
-    [fetchSearchResult, getData, query]
+    [store, text]
   )
 
   return (
-    <Form style={{ marginBottom: '40px' }} onSubmit={e => onSearch(e, query)}>
+    <Form style={{ marginBottom: '40px' }} onSubmit={onSearch}>
       <FormGroup>
         <Label>쇼핑 품목을 검색하세요</Label>
         <Input
           type="text"
-          value={query}
-          onChange={e => {
-            onChangeQuery(e.target.value)
-          }}
+          value={text}
+          onChange={e => onChangeQuery(e.target.value)}
           autoFocus
         />
       </FormGroup>
-      {query && (
+      {text && (
         <ListGroup>
-          {autoCompletedQuery.map(item =>
-            item.map(el => (
-              <ListGroupItem
-                key={Math.random()}
-                onClick={e => {
-                  onSearch(e, e.target.textContent)
-                }}
-              >
-                {el}
-              </ListGroupItem>
-            ))
-          )}
+          {store.autoCompletedQuery &&
+            autoCompletedQuery.map(item =>
+              item.map(el => (
+                <ListGroupItem
+                  key={Math.random()}
+                  onClick={e => {
+                    onSearch(e, e.target.textContent)
+                  }}
+                >
+                  {el}
+                </ListGroupItem>
+              ))
+            )}
         </ListGroup>
       )}
     </Form>
   )
 }
 
-export default SearchProduct
+export default observer(SearchProduct)

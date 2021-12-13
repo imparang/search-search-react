@@ -1,29 +1,28 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Button } from 'reactstrap'
 import PropTypes from 'prop-types'
-import axios from 'axios'
 import dayjs from 'dayjs'
+import { observer } from 'mobx-react'
 
-const ProductItem = ({ product, isDetail }) => {
+const ProductItem = ({ store, ...props }) => {
+  const { product, isDetail } = props
+  const [productData, setProductData] = useState({})
+
+  useEffect(() => {
+    setProductData({
+      productId: product.productId,
+      title: product.title,
+      image: product.image,
+      category1: product.category1,
+      category2: product.category2,
+      category3: product.category3,
+      category4: product.category4
+    })
+  }, [product])
+
   const onClick = useCallback(async () => {
-    try {
-      const res = await axios.post('/account', {
-        productId: product.productId,
-        title: product.title,
-        image: product.image,
-        category1: product.category1,
-        category2: product.category2,
-        category3: product.category3,
-        category4: product.category4
-      })
-      if (res && res.status === 200) {
-        const { data } = res
-        return data.items
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }, [])
+    store.buyProduct(productData)
+  }, [productData, store])
 
   return (
     <tr style={{ textAlign: 'center', verticalAlign: 'middle' }}>
@@ -66,4 +65,4 @@ ProductItem.propTypes = {
   product: PropTypes.object.isRequired
 }
 
-export default ProductItem
+export default observer(ProductItem)

@@ -1,15 +1,16 @@
 import React from 'react'
 import { Card, Table } from 'reactstrap'
 import ProductItem from './ProductItem'
+import { observer } from 'mobx-react'
 
-const ProductList = ({ data, isSearch }) => {
+const ProductList = ({ store }) => {
   const productitems =
-    data &&
-    data.map(product => (
-      <ProductItem key={product.productId} product={product} />
+    store.searchResults &&
+    store.searchResults.map(product => (
+      <ProductItem key={product.productId} product={product} store={store} />
     ))
 
-  return data?.length ? (
+  return store.isSearch ? (
     <Table hover>
       <thead>
         <tr style={{ textAlign: 'center', verticalAlign: 'middle' }}>
@@ -23,10 +24,12 @@ const ProductList = ({ data, isSearch }) => {
       <tbody>{productitems}</tbody>
     </Table>
   ) : (
-    <Card style={{ height: 'calc(100vh - 274px)', padding: '20px' }}>
-      {isSearch && '상품이 없습니다.'}
-    </Card>
+    store.isSearch && (
+      <Card style={{ padding: '20px' }}>
+        {store.isSearch && '상품이 없습니다.'}
+      </Card>
+    )
   )
 }
 
-export default ProductList
+export default observer(ProductList)
