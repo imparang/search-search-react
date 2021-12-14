@@ -48,23 +48,25 @@ const SearchProduct = ({ store }) => {
           autoFocus
         />
       </FormGroup>
-      {text && (
-        <ListGroup>
-          {store.autoCompletedQuery &&
-            autoCompletedQuery.map(item =>
-              item.map(el => (
-                <ListGroupItem
-                  key={Math.random()}
-                  onClick={e => {
-                    onSearch(e, e.target.textContent)
-                  }}
-                >
-                  {el}
-                </ListGroupItem>
-              ))
-            )}
-        </ListGroup>
-      )}
+      <FormGroup style={{ position: 'relative' }}>
+        {text && (
+          <ListGroup style={{ position: 'absolute', width: '100%' }}>
+            {store.autoCompletedQuery &&
+              autoCompletedQuery.map(item =>
+                item.map(el => (
+                  <ListGroupItem
+                    key={Math.random()}
+                    onClick={e => {
+                      onSearch(e, e.target.textContent)
+                    }}
+                  >
+                    {el}
+                  </ListGroupItem>
+                ))
+              )}
+          </ListGroup>
+        )}
+      </FormGroup>
     </Form>
   )
 }
