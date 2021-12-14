@@ -9,9 +9,10 @@ import {
   TabPane
 } from 'reactstrap'
 import Detail from './components/Detail'
+import Map from './components/Map'
 import ProductList from './components/ProductList'
 import SearchProduct from './components/SearchProduct'
-import ShopStore from './redux/store'
+import ShopStore from './mobx/store'
 
 const store = new ShopStore()
 
@@ -24,10 +25,9 @@ function App() {
       <Nav tabs>
         <NavItem>
           <NavLink
-            className={active ? '' : 'active'}
-            onClick={() => {
+            className={activeTab === '1' ? 'active' : ''}
+            onClick={e => {
               setActiveTab('1')
-              setActive(false)
             }}
           >
             Product
@@ -35,13 +35,22 @@ function App() {
         </NavItem>
         <NavItem>
           <NavLink
-            className={active ? 'active' : ''}
+            className={activeTab === '2' ? 'active' : ''}
             onClick={e => {
               setActiveTab('2')
-              setActive(true)
             }}
           >
             Stat
+          </NavLink>
+        </NavItem>
+        <NavItem>
+          <NavLink
+            className={activeTab === '3' ? 'active' : ''}
+            onClick={e => {
+              setActiveTab('3')
+            }}
+          >
+            Map
           </NavLink>
         </NavItem>
       </Nav>
@@ -53,6 +62,9 @@ function App() {
           </TabPane>
           <TabPane tabId="2">
             <Detail store={store} />
+          </TabPane>
+          <TabPane tabId="3">
+            <Map />
           </TabPane>
         </TabContent>
       </Card>
